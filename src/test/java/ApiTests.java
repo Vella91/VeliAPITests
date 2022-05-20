@@ -38,9 +38,9 @@ public class ApiTests {
                 .when()
                 .post("/users/login");
 
-      /*  response
+        response
                 .then()
-                .statusCode(201);*/
+                .statusCode(201);
 
         //convert the response body json into a string
         String loginResponseBody = response.getBody().asString();
@@ -93,6 +93,8 @@ public class ApiTests {
 
     @Test
     public void followUser() {
+
+        getPosts();
         ActionsPOJO followUser = new ActionsPOJO();
         followUser.setAction("followUser");
 
@@ -103,7 +105,7 @@ public class ApiTests {
                 .when()
                 .patch("/users/" + userId)
                 .then()
-             /*   .statusCode(200)*/
+                .statusCode(200)
                 .body("user.id", equalTo(userId))
                 .log()
                 .all();
