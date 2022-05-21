@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -12,12 +13,12 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class ApiTests {
 
-    static String loginToken;
-    static int myUserId;
-    static int postId;
-    static int userId;
+    public String loginToken;
+    public Integer myUserId;
+    public Integer postId;
+    public Integer userId;
 
-    @BeforeTest
+    @BeforeMethod
     public void loginTest() throws JsonProcessingException {
         LoginPOJO login = new LoginPOJO();
 

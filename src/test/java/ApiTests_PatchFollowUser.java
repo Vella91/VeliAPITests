@@ -1,3 +1,4 @@
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -22,7 +23,7 @@ public class ApiTests_PatchFollowUser {
                 .when()
                 .patch("/users/" + userId)
                 .then()
-                /*   .statusCode(200)*/
+                .statusCode(200)
                 .body("user.id", equalTo(userId))
                 .log()
                 .all();
