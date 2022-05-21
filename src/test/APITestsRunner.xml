@@ -1,12 +1,7 @@
 <suite name="API-tests Suite" parallel="methods" thread-count="2" >
     <test name="API-tests" group-by-instances="true">
         <classes>
-         <!--   <class name="ApiTests_PostLogin" />
-            <class name="ApiTests_GetUser"/>
-            <class name="ApiTests_GetPosts"/>
-            <class name="ApiTests_PatchLikePost"/>-->
-          <!--  <class name="ApiTests_PatchFollowUser"/>-->
-            <class name="ApiTests_GetUsersPosts"/>
+            <class name="ApiTests"/>
         </classes>
     </test>
 </suite>

@@ -2,6 +2,16 @@ public class ActionsPOJO {
 
     private String content;
     private String action;
+    private String postStatus;
+
+
+    public String getPostStatus() {
+        return postStatus;
+    }
+
+    public void setPostStatus(String postStatus) {
+        this.postStatus = postStatus;
+    }
 
     public String getContent() {
         return content;

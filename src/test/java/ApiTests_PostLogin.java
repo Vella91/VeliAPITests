@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
@@ -13,8 +14,8 @@ public class ApiTests_PostLogin {
     static int myUserId;
 
 
-    @Test
-    public void loginTest200() throws JsonProcessingException {
+    @BeforeSuite(alwaysRun = true)
+    public String loginTest200() throws JsonProcessingException {
         LoginPOJO login = new LoginPOJO();
 
         //set the login credentials by using the loginPOJO class setters
@@ -44,6 +45,7 @@ public class ApiTests_PostLogin {
         System.out.println("Extracted token is: " + loginToken);
 
         myUserId = JsonPath.parse(loginResponseBody).read("$.user.id");
+        return loginToken;
     }
 
     @Test
