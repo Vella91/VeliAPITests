@@ -3,8 +3,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.*;
@@ -17,6 +17,7 @@ public class ApiTests {
     public Integer myUserId;
     public Integer postId;
     public Integer userId;
+    public Integer commentId;
 
     //before method to get Access token
     @BeforeMethod
@@ -76,7 +77,7 @@ public class ApiTests {
 
         //Tests for Get Posts
     @Test
-    public void getPosts() {
+    public void getPosts200() {
         Response response = given()
                 .when()
                 .get("/posts?take=5&skip=0");
@@ -106,7 +107,7 @@ public class ApiTests {
 
     //Tests for Get User
     @Test
-    public void getUser() {
+    public void getUser200() {
         given()
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + loginToken)
@@ -129,7 +130,7 @@ public class ApiTests {
 
     //Tests for PATCH like post
     @Test
-    public void likePost() {
+    public void likePost200() {
         ActionsPOJO likePost = new ActionsPOJO();
         likePost.setAction("likePost");
 
@@ -183,9 +184,9 @@ public class ApiTests {
 
     //Tests for PATCH Follow User
     @Test
-    public void followUser() {
+    public void followUser200() {
 
-        getPosts();
+        getPosts200();
         ActionsPOJO followUser = new ActionsPOJO();
         followUser.setAction("followUser");
 
@@ -203,9 +204,9 @@ public class ApiTests {
     }
 
     @Test
-    public void unfollowUser() {
+    public void unfollowUser200() {
 
-        getPosts();
+        getPosts200();
         ActionsPOJO unfollowUser = new ActionsPOJO();
         unfollowUser.setAction("unfollowUser");
 
@@ -225,7 +226,7 @@ public class ApiTests {
     @Test
     public void followUser401() {
 
-        getPosts();
+        getPosts200();
         ActionsPOJO followUser = new ActionsPOJO();
         followUser.setAction("followUser");
 
@@ -346,17 +347,21 @@ public class ApiTests {
         ActionsPOJO commentPost = new ActionsPOJO();
         commentPost.setContent("My Newest Comment!");
 
-        given()
+        Response response = (Response)  given()
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + loginToken)
                 .body(commentPost)
                 .when()
-                .post("/posts/4626/comment")
+                .post("/posts/4626/comment");
+        response
                 .then()
                 .body("content", equalTo("My Newest Comment!"))
                 .log()
                 .all()
                 .statusCode(201);
+
+        String comment = response.getBody().asString();
+        commentId = JsonPath.parse(comment).read("$.id");
     }
 
     @Test
@@ -373,5 +378,18 @@ public class ApiTests {
                 .log()
                 .all()
                 .statusCode(401);
+    }
+
+    @AfterTest
+    public void DeleteCommentPost200(){
+        given()
+                .header("Authorization", "Bearer " + loginToken)
+                .header("Content-Type", "application/json")
+                .when()
+                .delete("posts/4626/comments/" + commentId)
+                .then()
+                .log()
+                .all()
+                .statusCode(200);
     }
 }
