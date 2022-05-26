@@ -1,13 +1,10 @@
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
-public class ApiTests_PatchFollowUser {
+public class ApiTestsPatchFollowUser extends LoginSetUp{
 
-        static String loginToken;
         static int userId;
 
         @Test

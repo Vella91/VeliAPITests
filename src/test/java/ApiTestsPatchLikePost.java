@@ -2,9 +2,8 @@ import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
 
-public class ApiTests_PatchLikePost {
+public class ApiTestsPatchLikePost extends LoginSetUp {
 
-    static String loginToken;
     static int postId;
 
         @Test

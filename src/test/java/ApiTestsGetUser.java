@@ -1,15 +1,12 @@
 import org.testng.annotations.Test;
-
 import static io.restassured.RestAssured.given;
 
-public class ApiTests_GetUser {
+public class ApiTestsGetUser extends LoginSetUp {
 
-    public String loginToken;
-    public Integer myUserId;
-
-//D: the API returns 401 when user is authorized
     @Test
     public void getUser200() {
+
+     /*   RestAssured.baseURI = "http://training.skillo-bg.com:3100";*/
         given()
                 .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + loginToken)
@@ -24,7 +21,7 @@ public class ApiTests_GetUser {
         given()
                 .header("Content-Type", "application/json")
                 .when()
-                .get("/users/" + myUserId)
+                .get("/users/" + loggedUserId)
                 .then()
                 .statusCode(401);
     }
