@@ -1,3 +1,5 @@
+package apitests;
+
 /**
  * login POJO file for setting and getting credentials
  */

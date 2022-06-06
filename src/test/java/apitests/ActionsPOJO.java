@@ -1,3 +1,5 @@
+package apitests;
+
 public class ActionsPOJO {
 
     private String content;

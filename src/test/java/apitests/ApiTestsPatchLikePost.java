@@ -1,3 +1,7 @@
+package apitests;
+
+import apitests.ActionsPOJO;
+import apitests.LoginSetUp;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;

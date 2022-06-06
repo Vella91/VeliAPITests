@@ -1,9 +1,13 @@
+package apitests;
+
+import apitests.ActionsPOJO;
+import apitests.LoginSetUp;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
-public class ApiTestsPatchFollowUser extends LoginSetUp{
+public class ApiTestsPatchFollowUser extends LoginSetUp {
 
         static int userId;
 

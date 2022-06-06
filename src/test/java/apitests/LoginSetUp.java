@@ -1,3 +1,5 @@
+package apitests;
+
 import com.jayway.jsonpath.JsonPath;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;

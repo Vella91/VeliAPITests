@@ -1,3 +1,5 @@
+package apitests;
+
 import com.jayway.jsonpath.JsonPath;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;

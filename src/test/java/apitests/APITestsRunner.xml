@@ -1,7 +1,7 @@
 <suite name="API-tests Suite" parallel="methods" thread-count="2" >
     <test name="API-tests" group-by-instances="true">
         <classes>
-            <class name="ApiTests"/>
+            <class name="apitests.ApiTests"/>
         </classes>
     </test>
 </suite>

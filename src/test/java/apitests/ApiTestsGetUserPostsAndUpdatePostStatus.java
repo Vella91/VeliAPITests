@@ -1,5 +1,7 @@
+package apitests;
+
+import apitests.ActionsPOJO;
 import com.jayway.jsonpath.JsonPath;
-import groovy.util.logging.Log;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
@@ -14,11 +16,11 @@ public class ApiTestsGetUserPostsAndUpdatePostStatus extends LoginSetUp {
     public void getUserPosts200() {
         Response response = (Response) given()
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + loginToken)
+                .header("Authorization", "Bearer " + LoginSetUp.loginToken)
                 .queryParam("take", 5)
                 .queryParam("skip", 0)
                 .when()
-                .get("/users/" + loggedUserId + "/posts");
+                .get("/users/" + LoginSetUp.loggedUserId + "/posts");
         response
                 .then()
                 .statusCode(200);
@@ -34,7 +36,7 @@ public class ApiTestsGetUserPostsAndUpdatePostStatus extends LoginSetUp {
                 .queryParam("take", 5)
                 .queryParam("skip", 0)
                 .when()
-                .get("/users/" + loggedUserId + "/posts");
+                .get("/users/" + LoginSetUp.loggedUserId + "/posts");
         response
                 .then()
                 .statusCode(401);
@@ -44,11 +46,11 @@ public class ApiTestsGetUserPostsAndUpdatePostStatus extends LoginSetUp {
     public void getUserPosts404() {
         Response response = (Response) given()
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + loginToken)
+                .header("Authorization", "Bearer " + LoginSetUp.loginToken)
                 .queryParam("take", 5)
                 .queryParam("skip", 0)
                 .when()
-                .get("/users" + loggedUserId + "posts");
+                .get("/users" + LoginSetUp.loggedUserId + "posts");
         response
                 .then()
                 .statusCode(404);
@@ -58,7 +60,7 @@ public class ApiTestsGetUserPostsAndUpdatePostStatus extends LoginSetUp {
     public void getUserPosts400() {
         Response response = (Response) given()
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + loginToken)
+                .header("Authorization", "Bearer " + LoginSetUp.loginToken)
                 .queryParam("take", 5)
                 .queryParam("skip", 0)
                 .when()
@@ -74,7 +76,7 @@ public class ApiTestsGetUserPostsAndUpdatePostStatus extends LoginSetUp {
         postStatus.setPostStatus("public");
         Response response = (Response) given()
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + loginToken)
+                .header("Authorization", "Bearer " + LoginSetUp.loginToken)
                 .body(postStatus)
                 .when()
                 .put("/posts/" + postId);
