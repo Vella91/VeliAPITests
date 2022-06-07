@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 
+import java.time.Duration;
 import java.util.List;
 
 public class FirstTest {
@@ -26,6 +27,7 @@ public class FirstTest {
         //opening a Chrome window
         driver.get("http://training.skillo-bg.com/posts/all");
         driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 
         //creating a WebElement and then use the WebElement to click on it
         WebElement loginButton = driver.findElement(By.id("nav-link-login"));
