@@ -1,0 +1,7 @@
+<suite name="Regression" parallel="methods" thread-count="2" >
+    <test name="Regression1" group-by-instances="true">
+        <classes>
+            <class name="apitests.ApiTests" />
+        </classes>
+    </test>
+</suite>
