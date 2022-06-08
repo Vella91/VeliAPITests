@@ -98,4 +98,48 @@ public class HerokuApp {
 
         Thread.sleep(1000);
     }
+
+    @Test
+    public void checkboxes() throws InterruptedException {
+        driver.get("https://the-internet.herokuapp.com/checkboxes");
+
+        WebElement checkbox1 = driver.findElement(By.xpath("//input[1]"));
+        WebElement checkbox2 = driver.findElement(By.xpath("//input[2]"));
+
+
+        boolean checkbox1InitialState = checkbox1.isSelected();
+/*
+        boolean checkbox2InitialState = checkbox2.isSelected();
+*/
+
+        if(checkbox1InitialState){
+            checkbox1.click();
+            Assert.assertFalse(checkbox1.isSelected());
+        }
+
+        Thread.sleep(1000);
+
+        /*if (checkBox1.isSelected())
+        {
+            checkBox1.click();
+            Assert.assertTrue(!checkBox1.isSelected());
+        }
+        else
+        {
+            checkBox1.click();
+            Assert.assertTrue(checkBox1.isSelected());
+        }
+
+        if (checkBox2.isSelected())
+        {
+            checkBox2.click();
+            Assert.assertTrue(!checkBox2.isSelected());
+        }
+        else
+        {
+            checkBox2.click();
+            Assert.assertTrue(checkBox2.isSelected());
+        }*/
+
+    }
 }
