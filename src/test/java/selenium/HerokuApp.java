@@ -1,12 +1,11 @@
 package selenium;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.Alert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
@@ -16,14 +15,16 @@ import java.util.List;
 public class HerokuApp {
 
     WebDriver driver;
-    WebDriver wait;
+    WebDriverWait wait;
     Actions actions;
+    JavascriptExecutor js;
 
     @BeforeMethod
     public void setUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         actions = new Actions(driver);
     }
 
@@ -60,7 +61,13 @@ public class HerokuApp {
         elementsContainerChildren = driver.findElements(By.xpath("//div[@id='elements']/descendant::*"));
 
         Assert.assertEquals(elementsContainerChildren.size(), 2 );
-        Thread.sleep(1000);
+
+        List<WebElement> deleteButtons = driver.findElements(By.xpath("//div[@id='elements"));
+        //finish this test
+        /*for(WebElement : deleteButtons){
+            deleteButtons.click();
+        }*/
+
     }
 
     @Test
@@ -104,7 +111,9 @@ public class HerokuApp {
         driver.get("https://the-internet.herokuapp.com/checkboxes");
 
         WebElement checkbox1 = driver.findElement(By.xpath("//input[1]"));
+/*
         WebElement checkbox2 = driver.findElement(By.xpath("//input[2]"));
+*/
 
 
         boolean checkbox1InitialState = checkbox1.isSelected();
@@ -112,13 +121,13 @@ public class HerokuApp {
         boolean checkbox2InitialState = checkbox2.isSelected();
 */
 
-        if(checkbox1InitialState){
+        if (checkbox1InitialState) {
             checkbox1.click();
             Assert.assertFalse(checkbox1.isSelected());
         }
 
         Thread.sleep(1000);
-
+    }
         /*if (checkBox1.isSelected())
         {
             checkBox1.click();
@@ -141,5 +150,39 @@ public class HerokuApp {
             Assert.assertTrue(checkBox2.isSelected());
         }*/
 
-    }
+        @Test
+        public void floatingMenu(){
+            driver.get("https://the-internet.herokuapp.com/floating_menu");
+            //assert floating element is there when opening the page
+            WebElement homeButton = driver.findElement(By.xpath("//*[@id='menu']//a[text()='Home']"));
+            Assert.assertTrue(homeButton.isDisplayed());
+
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("window.scrollBy(0,2000)");
+            //assert home button is stil there when scrolling down
+            Assert.assertTrue(homeButton.isDisplayed());
+
+            //scroll the page up
+            js.executeScript("window.scrollBy(0,-1000)");
+            //add explicit wait!!!!
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[id='menu']//a[text()='Home']")));
+            Assert.assertTrue(homeButton.isDisplayed());
+        }
+
+        @Test
+        public void dynamicControls(){
+            driver.get("https://the-internet.herokuapp.com/dynamic_controls");
+
+            WebElement checkbox = driver.findElement(By.id("checkbox"));
+            Assert.assertTrue(checkbox.isDisplayed());
+
+            WebElement removeButton = driver.findElement(By.xpath("//button[text()='Remove']"));
+            removeButton.click();
+
+            WebElement loadingAnimation = driver.findElement(By.xpath("//div[@id='loading']"));
+            wait.until(ExpectedConditions.invisibilityOf(loadingAnimation));
+
+            Assert.assertFalse(checkbox.isDisplayed());
+            Assert.assertEquals(driver.findElement(By.id("message")).getText(), "It's gone!");
+        }
 }
