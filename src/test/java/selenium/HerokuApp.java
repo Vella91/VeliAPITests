@@ -5,12 +5,15 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class HerokuApp {
 
@@ -55,12 +58,12 @@ public class HerokuApp {
         List<WebElement> elementsContainerChildren = driver.findElements(By.xpath("//div[@id='elements']/descendant::*"));
         WebElement addElementbutton = driver.findElement(By.xpath("//button[@onclick='addElement()']"));
 
-        for(int i=0;i<2;i++){
+        for (int i = 0; i < 2; i++) {
             addElementbutton.click();
         }
         elementsContainerChildren = driver.findElements(By.xpath("//div[@id='elements']/descendant::*"));
 
-        Assert.assertEquals(elementsContainerChildren.size(), 2 );
+        Assert.assertEquals(elementsContainerChildren.size(), 2);
 
         List<WebElement> deleteButtons = driver.findElements(By.xpath("//div[@id='elements"));
         //finish this test
@@ -72,16 +75,16 @@ public class HerokuApp {
 
     @Test
     public void basicAuth() throws InterruptedException {
-     driver.get("https://admin:admin@the-internet.herokuapp.com/basic_auth");
-     WebElement text = driver.findElement(By.xpath("//div[@class='example']/p"));
+        driver.get("https://admin:admin@the-internet.herokuapp.com/basic_auth");
+        WebElement text = driver.findElement(By.xpath("//div[@class='example']/p"));
 
-     Assert.assertEquals(text.getText(), "Congratulations! You must have the proper credentials.");
+        Assert.assertEquals(text.getText(), "Congratulations! You must have the proper credentials.");
 
-     Thread.sleep(1000);
+        Thread.sleep(1000);
     }
 
     @Test
-    public void dragAndDrop(){
+    public void dragAndDrop() {
         driver.get("https://the-internet.herokuapp.com/drag_and_drop");
 
         WebElement elementA = driver.findElement(By.id("column-a"));
@@ -150,39 +153,73 @@ public class HerokuApp {
             Assert.assertTrue(checkBox2.isSelected());
         }*/
 
-        @Test
-        public void floatingMenu(){
-            driver.get("https://the-internet.herokuapp.com/floating_menu");
-            //assert floating element is there when opening the page
-            WebElement homeButton = driver.findElement(By.xpath("//*[@id='menu']//a[text()='Home']"));
-            Assert.assertTrue(homeButton.isDisplayed());
+    @Test
+    public void floatingMenu() {
+        driver.get("https://the-internet.herokuapp.com/floating_menu");
+        //assert floating element is there when opening the page
+        WebElement homeButton = driver.findElement(By.xpath("//*[@id='menu']//a[text()='Home']"));
+        Assert.assertTrue(homeButton.isDisplayed());
 
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-            js.executeScript("window.scrollBy(0,2000)");
-            //assert home button is stil there when scrolling down
-            Assert.assertTrue(homeButton.isDisplayed());
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollBy(0,2000)");
+        //assert home button is stil there when scrolling down
+        Assert.assertTrue(homeButton.isDisplayed());
 
-            //scroll the page up
-            js.executeScript("window.scrollBy(0,-1000)");
-            //add explicit wait!!!!
-            wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[id='menu']//a[text()='Home']")));
-            Assert.assertTrue(homeButton.isDisplayed());
-        }
+        //scroll the page up
+        js.executeScript("window.scrollBy(0,-1000)");
+        //add explicit wait!!!!
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[id='menu']//a[text()='Home']")));
+        Assert.assertTrue(homeButton.isDisplayed());
+    }
 
-        @Test
-        public void dynamicControls(){
-            driver.get("https://the-internet.herokuapp.com/dynamic_controls");
+    @Test
+    public void dynamicControls() {
+        driver.get("https://the-internet.herokuapp.com/dynamic_controls");
 
-            WebElement checkbox = driver.findElement(By.id("checkbox"));
-            Assert.assertTrue(checkbox.isDisplayed());
+        WebElement checkbox = driver.findElement(By.id("checkbox"));
+        Assert.assertTrue(checkbox.isDisplayed());
 
-            WebElement removeButton = driver.findElement(By.xpath("//button[text()='Remove']"));
-            removeButton.click();
+        WebElement removeButton = driver.findElement(By.xpath("//button[text()='Remove']"));
+        removeButton.click();
 
-            WebElement loadingAnimation = driver.findElement(By.xpath("//div[@id='loading']"));
-            wait.until(ExpectedConditions.invisibilityOf(loadingAnimation));
+        WebElement loadingAnimation = driver.findElement(By.xpath("//div[@id='loading']"));
+        wait.until(ExpectedConditions.invisibilityOf(loadingAnimation));
 
-            Assert.assertFalse(checkbox.isDisplayed());
-            Assert.assertEquals(driver.findElement(By.id("message")).getText(), "It's gone!");
-        }
+        Assert.assertFalse(checkbox.isDisplayed());
+        Assert.assertEquals(driver.findElement(By.id("message")).getText(), "It's gone!");
+
+        //fluent wait
+        Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+                .withTimeout(Duration.ofSeconds(30))
+                .pollingEvery(Duration.ofSeconds(1))
+                .ignoring(NoSuchElementException.class);
+        //wait until invisibility of element next
+    }
+
+    @Test
+    public void dynamicLoading() {
+        driver.get("https://the-internet.herokuapp.com/dynamic_controls");
+
+        By startButton = By.xpath("//div[@id='start']/button");
+        By helloWorldText = By.xpath("//div[@id='finish']");
+
+        WebElement startButtonWebElement = driver.findElement(startButton);
+        startButtonWebElement.click();
+        WebElement helloWorldTextWebElement = driver.findElement(helloWorldText);
+    }
+
+    @Test
+    public void iFrames(){
+        driver.get("https://the-internet.herokuapp.com/iframe");
+        //switch to iframe to locate elements
+        driver.switchTo().frame("mce-0-ifr");
+
+        WebElement textElement = driver.findElement(By.xpath("//*[@id='tinymce']//p"));
+        textElement.clear();
+        textElement.sendKeys("test");
+
+        //switch to default content to locate elements outside of the iframe
+        driver.switchTo().defaultContent();
+        WebElement headerText = driver.findElement(By.xpath("//div[@class='example']/h3"));
+    }
 }
