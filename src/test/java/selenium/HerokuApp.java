@@ -27,7 +27,7 @@ public class HerokuApp {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         actions = new Actions(driver);
     }
 
@@ -36,7 +36,7 @@ public class HerokuApp {
         driver.close();
     }
 
-    @Test
+    @Test(testName = "should have no delete buttons")
     public void addRemoveElements1() throws InterruptedException {
         driver.get("https://the-internet.herokuapp.com/add_remove_elements/");
     /*    WebElement deleteButton = driver.findElement(By.cssSelector(".deleteButton"));
@@ -51,29 +51,30 @@ public class HerokuApp {
         Thread.sleep(1000);
     }
 
-    @Test
+    @Test(testName = "add delete buttons and remove delete buttons after click on them")
     public void addRemoveElements2() throws InterruptedException {
         driver.get("https://the-internet.herokuapp.com/add_remove_elements/");
         //test logic
-        List<WebElement> elementsContainerChildren = driver.findElements(By.xpath("//div[@id='elements']/descendant::*"));
-        WebElement addElementbutton = driver.findElement(By.xpath("//button[@onclick='addElement()']"));
+
+        WebElement addElementButton = driver.findElement(By.xpath("//button[@onclick='addElement()']"));
 
         for (int i = 0; i < 2; i++) {
-            addElementbutton.click();
+            addElementButton.click();
         }
-        elementsContainerChildren = driver.findElements(By.xpath("//div[@id='elements']/descendant::*"));
+        List<WebElement> elementsContainerChildrenFilled = driver.findElements(By.xpath("//div[@id='elements']/descendant::*"));
 
-        Assert.assertEquals(elementsContainerChildren.size(), 2);
+        Assert.assertEquals(elementsContainerChildrenFilled.size(), 2);
 
-        List<WebElement> deleteButtons = driver.findElements(By.xpath("//div[@id='elements"));
         //finish this test
-        /*for(WebElement : deleteButtons){
-            deleteButtons.click();
-        }*/
-
+        List<WebElement> deleteButtons = driver.findElements(By.xpath("//div[@id='elements"));
+        for(WebElement deleteButton : deleteButtons){
+            deleteButton.click();
+        }
+        //assert at the end that the list of delete buttons is empty because we removed them
+        Assert.assertTrue(deleteButtons.isEmpty());
     }
 
-    @Test
+    @Test(testName = "find Congrats text after successful authentication")
     public void basicAuth() throws InterruptedException {
         driver.get("https://admin:admin@the-internet.herokuapp.com/basic_auth");
         WebElement text = driver.findElement(By.xpath("//div[@class='example']/p"));
@@ -83,7 +84,7 @@ public class HerokuApp {
         Thread.sleep(1000);
     }
 
-    @Test
+    @Test(testName = "drag and drop elements")
     public void dragAndDrop() {
         driver.get("https://the-internet.herokuapp.com/drag_and_drop");
 
@@ -91,10 +92,17 @@ public class HerokuApp {
         WebElement elementB = driver.findElement(By.id("column-b"));
 
         actions.moveToElement(elementA).clickAndHold(elementA).moveToElement(elementB).release(elementB).build().perform();
+        //another method from Iv's homework
+        actions.dragAndDrop(elementA,elementB).perform();
+        WebElement headerElementA = driver.findElement(By.xpath("//div[@id='column-a']/header"));
 
+        //does not work as expected
+/*
+        Assert.assertEquals(headerElementA.getText(),"B");
+*/
     }
 
-    @Test
+    @Test(testName = "should context click on element and dismiss shown alert")
     public void contextMenu() throws InterruptedException {
         driver.get("https://the-internet.herokuapp.com/context_menu");
 
@@ -109,49 +117,24 @@ public class HerokuApp {
         Thread.sleep(1000);
     }
 
-    @Test
+    @Test(testName = "should check status of checkboxes")
     public void checkboxes() throws InterruptedException {
         driver.get("https://the-internet.herokuapp.com/checkboxes");
 
         WebElement checkbox1 = driver.findElement(By.xpath("//input[1]"));
-/*
-        WebElement checkbox2 = driver.findElement(By.xpath("//input[2]"));
-*/
 
-
-        boolean checkbox1InitialState = checkbox1.isSelected();
-/*
-        boolean checkbox2InitialState = checkbox2.isSelected();
-*/
-
-        if (checkbox1InitialState) {
+        if (checkbox1.isSelected()) {
             checkbox1.click();
             Assert.assertFalse(checkbox1.isSelected());
+        }
+        else
+        {
+            checkbox1.click();
+            Assert.assertTrue(checkbox1.isSelected());
         }
 
         Thread.sleep(1000);
     }
-        /*if (checkBox1.isSelected())
-        {
-            checkBox1.click();
-            Assert.assertTrue(!checkBox1.isSelected());
-        }
-        else
-        {
-            checkBox1.click();
-            Assert.assertTrue(checkBox1.isSelected());
-        }
-
-        if (checkBox2.isSelected())
-        {
-            checkBox2.click();
-            Assert.assertTrue(!checkBox2.isSelected());
-        }
-        else
-        {
-            checkBox2.click();
-            Assert.assertTrue(checkBox2.isSelected());
-        }*/
 
     @Test
     public void floatingMenu() {
@@ -162,7 +145,7 @@ public class HerokuApp {
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollBy(0,2000)");
-        //assert home button is stil there when scrolling down
+        //assert home button is still there when scrolling down
         Assert.assertTrue(homeButton.isDisplayed());
 
         //scroll the page up
@@ -196,19 +179,28 @@ public class HerokuApp {
         //wait until invisibility of element next
     }
 
-    @Test
+    @Test(testName = "checks invisibility of elements")
     public void dynamicLoading() {
         driver.get("https://the-internet.herokuapp.com/dynamic_controls");
 
-        By startButton = By.xpath("//div[@id='start']/button");
-        By helloWorldText = By.xpath("//div[@id='finish']");
+        //assert the checkbox is present after loading the page
+        WebElement checkbox = driver.findElement(By.id("checkbox"));
+        Assert.assertTrue(checkbox.isDisplayed());
 
-        WebElement startButtonWebElement = driver.findElement(startButton);
-        startButtonWebElement.click();
-        WebElement helloWorldTextWebElement = driver.findElement(helloWorldText);
+        //click hte remove button
+        WebElement removeButton = driver.findElement(By.xpath("//button[text()='Remove']"));
+        removeButton.click();
+
+        //wait until the animation for removing the checkbox is gone
+        WebElement loadingAnimation = driver.findElement(By.xpath("//div[@id='loading']"));
+        wait.until(ExpectedConditions.invisibilityOf(loadingAnimation));
+
+        //asserts - first assert does not work
+        Assert.assertFalse(checkbox.isDisplayed());
+        Assert.assertEquals(driver.findElement(By.id("message")).getText(), "It's gone!");
     }
 
-    @Test
+    @Test(testName = "iFrames switching")
     public void iFrames(){
         driver.get("https://the-internet.herokuapp.com/iframe");
         //switch to iframe to locate elements
