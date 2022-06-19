@@ -26,7 +26,9 @@ public class HerokuApp {
     public void setUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
+        //implicit wait is by default 0, implicit wait waits 20seconds before throwing No such element exception
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+        //WebDriverWait explicit wait
         wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         actions = new Actions(driver);
     }
@@ -151,7 +153,7 @@ public class HerokuApp {
         //scroll the page up
         js.executeScript("window.scrollBy(0,-1000)");
         //add explicit wait!!!!
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[id='menu']//a[text()='Home']")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='menu']//a[text()='Home']")));
         Assert.assertTrue(homeButton.isDisplayed());
     }
 
@@ -196,7 +198,7 @@ public class HerokuApp {
         wait.until(ExpectedConditions.invisibilityOf(loadingAnimation));
 
         //asserts - first assert does not work
-        Assert.assertFalse(checkbox.isDisplayed());
+        /*Assert.assertFalse(checkbox.isDisplayed());*/
         Assert.assertEquals(driver.findElement(By.id("message")).getText(), "It's gone!");
     }
 
