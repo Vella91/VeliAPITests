@@ -99,9 +99,7 @@ public class HerokuApp {
         WebElement headerElementA = driver.findElement(By.xpath("//div[@id='column-a']/header"));
 
         //does not work as expected
-/*
         Assert.assertEquals(headerElementA.getText(),"B");
-*/
     }
 
     @Test(testName = "should context click on element and dismiss shown alert")
@@ -138,7 +136,7 @@ public class HerokuApp {
         Thread.sleep(1000);
     }
 
-    @Test
+    @Test(testName = "floating menu is working as expected with explicit wait for Home element")
     public void floatingMenu() {
         driver.get("https://the-internet.herokuapp.com/floating_menu");
         //assert floating element is there when opening the page
@@ -157,7 +155,7 @@ public class HerokuApp {
         Assert.assertTrue(homeButton.isDisplayed());
     }
 
-    @Test
+    @Test(testName = "test with invisibility of element")
     public void dynamicControls() {
         driver.get("https://the-internet.herokuapp.com/dynamic_controls");
 
@@ -170,36 +168,28 @@ public class HerokuApp {
         WebElement loadingAnimation = driver.findElement(By.xpath("//div[@id='loading']"));
         wait.until(ExpectedConditions.invisibilityOf(loadingAnimation));
 
-        Assert.assertFalse(checkbox.isDisplayed());
+        wait.until(ExpectedConditions.invisibilityOf(checkbox));
         Assert.assertEquals(driver.findElement(By.id("message")).getText(), "It's gone!");
 
-        //fluent wait
-        Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
+        //fluent wait - custom logic for polling interval and wait time and ignoring exception class - for complex logic
+      /*  Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
                 .withTimeout(Duration.ofSeconds(30))
                 .pollingEvery(Duration.ofSeconds(1))
-                .ignoring(NoSuchElementException.class);
+                .ignoring(NoSuchElementException.class);*/
         //wait until invisibility of element next
     }
 
-    @Test(testName = "checks invisibility of elements")
+    @Test(testName = "checks dynamic changes of elements - hello world is displayed")
     public void dynamicLoading() {
-        driver.get("https://the-internet.herokuapp.com/dynamic_controls");
+        driver.get("https://the-internet.herokuapp.com/dynamic_loading/2");
 
-        //assert the checkbox is present after loading the page
-        WebElement checkbox = driver.findElement(By.id("checkbox"));
-        Assert.assertTrue(checkbox.isDisplayed());
+        By startButton = By.xpath("//div[@id='start']/button");
+        By helloWorldText = By.xpath("//div[@id='finish']/h4");
 
-        //click hte remove button
-        WebElement removeButton = driver.findElement(By.xpath("//button[text()='Remove']"));
-        removeButton.click();
-
-        //wait until the animation for removing the checkbox is gone
-        WebElement loadingAnimation = driver.findElement(By.xpath("//div[@id='loading']"));
-        wait.until(ExpectedConditions.invisibilityOf(loadingAnimation));
-
-        //asserts - first assert does not work
-        /*Assert.assertFalse(checkbox.isDisplayed());*/
-        Assert.assertEquals(driver.findElement(By.id("message")).getText(), "It's gone!");
+        WebElement startButtonWebElement = driver.findElement(startButton);
+        startButtonWebElement.click();
+        WebElement helloWorldWebElement = driver.findElement(helloWorldText);
+        Assert.assertTrue(helloWorldWebElement.isDisplayed());
     }
 
     @Test(testName = "iFrames switching")
